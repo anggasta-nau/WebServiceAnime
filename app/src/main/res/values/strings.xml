@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">PAM ActivityIntent</string>
+    <string name="label_username">username</string>
+    <string name="btn_label_ok">ok</string>
+    <string name="label_password">password</string>
+    <string name="btn_title_login">login</string>
+    <string name="btn_title_signup">signup</string>
+</resources>
