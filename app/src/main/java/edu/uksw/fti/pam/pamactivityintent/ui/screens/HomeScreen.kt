@@ -1,11 +1,15 @@
 package edu.uksw.fti.pam.pamactivityintent.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
@@ -23,6 +27,7 @@ import coil.compose.base.R
 import coil.compose.rememberImagePainter
 import coil.size.Scale
 import coil.transform.CircleCropTransformation
+import edu.uksw.fti.pam.pamactivityintent.models.AnimeModel
 import edu.uksw.fti.pam.pamactivityintent.models.AnimeViewModel
 import edu.uksw.fti.pam.pamactivityintent.models.TodosViewModel
 import edu.uksw.fti.pam.pamactivityintent.ui.theme.PAMActivityIntentTheme
@@ -52,19 +57,11 @@ fun MainScreenView(
             avm.getAnimeList()
         }
     )
-
-    Column() {
-
-        Box(){
-            Surface() {
-                Row {
-
-                }
-            }
-        }
-    }
-
     Column {
+        when {
+            avm.errorMessage.isEmpty() -> AvmList(avl = avm.animeList)
+            else -> Log.e("AVM", "Something happened")
+        }
         if (avm.errorMessage.isEmpty()) {
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(120.dp)
@@ -140,20 +137,81 @@ fun MainScreenView(
                             }
                         }
                     }
-
-
-
-
-
-
-
-
-
                 }
             }
         }
         else {
             Text(text = avm.errorMessage)
+        }
+    }
+}
+
+@Composable
+fun AvmList(avl: List<AnimeModel>) {
+    Box(modifier = Modifier
+        .fillMaxWidth()
+        .padding(10.dp)
+    ) {
+        LazyRow(modifier = Modifier
+            .fillMaxWidth(),
+            state = rememberLazyListState()
+        ) {
+            itemsIndexed(avl) {index, item ->
+                Card(modifier = Modifier
+                    .width(250.dp)
+                    .height(150.dp)
+                    .padding(5.dp),
+                ) {
+                    Row(modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(5.dp),
+//                        horizontalArrangement = Arrangement.Start
+                    ) {
+                        Image(
+                            painter = rememberImagePainter(
+                                data = item.imgUrl,
+                                builder = {
+                                    scale(Scale.FILL)
+                                    placeholder(R.drawable.notification_action_background)
+                                    transformations(CircleCropTransformation())
+                                }
+                            ),
+                            contentDescription = item.Deskripsi,
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .weight(0.2f)
+                        )
+                        Column(modifier = Modifier
+                                .padding(4.dp)
+                                .fillMaxHeight()
+                                .weight(0.8f),
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Text(text = item.title)
+                            Text(
+                                text = item.title,
+                                style = MaterialTheme.typography.subtitle1,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                text = item.genre,
+                                style = MaterialTheme.typography.caption,
+                                modifier = Modifier
+                                    .background(
+                                        Color.LightGray
+                                    )
+                                    .padding(4.dp)
+                            )
+                            Text(
+                                text = item.Deskripsi,
+                                style = MaterialTheme.typography.body1,
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
 }

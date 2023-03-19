@@ -15,7 +15,9 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import edu.uksw.fti.pam.acitivityintent.contracts.SignUpContract
+import edu.uksw.fti.pam.pamactivityintent.ui.screens.DefaultPreview
 import edu.uksw.fti.pam.pamactivityintent.ui.screens.LoginForm
+import edu.uksw.fti.pam.pamactivityintent.ui.screens.MainScreenView
 import edu.uksw.fti.pam.pamactivityintent.ui.theme.PAMActivityIntentTheme
 
 class MainActivity : ComponentActivity() {
@@ -28,7 +30,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    LoginForm()
+//                    LoginForm()
+                    DefaultPreview()
                 }
             }
         }
