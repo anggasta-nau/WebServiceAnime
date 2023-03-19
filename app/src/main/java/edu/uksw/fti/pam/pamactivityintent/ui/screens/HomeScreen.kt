@@ -1,8 +1,10 @@
 package edu.uksw.fti.pam.pamactivityintent.ui.screens
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -59,7 +61,11 @@ fun MainScreenView(
     )
     Column {
         when {
-            avm.errorMessage.isEmpty() -> AvmList(avl = avm.animeList)
+            avm.errorMessage.isEmpty() -> {
+                AvmList(avl = avm.animeList) {animeId ->
+                    Log.d("ClickItem", "this is anime id: $animeId")
+                }
+            }
             else -> Log.e("AVM", "Something happened")
         }
         if (avm.errorMessage.isEmpty()) {
@@ -147,7 +153,7 @@ fun MainScreenView(
 }
 
 @Composable
-fun AvmList(avl: List<AnimeModel>) {
+fun AvmList(avl: List<AnimeModel>, itemClick: (index: Int)-> Unit) {
     Box(modifier = Modifier
         .fillMaxWidth()
         .padding(10.dp)
@@ -160,7 +166,10 @@ fun AvmList(avl: List<AnimeModel>) {
                 Card(modifier = Modifier
                     .width(250.dp)
                     .height(150.dp)
-                    .padding(5.dp),
+                    .padding(5.dp)
+                    .clickable {
+                        itemClick(item.id)
+                    },
                 ) {
                     Row(modifier = Modifier
                         .fillMaxWidth()
@@ -182,9 +191,9 @@ fun AvmList(avl: List<AnimeModel>) {
                                 .weight(0.2f)
                         )
                         Column(modifier = Modifier
-                                .padding(4.dp)
-                                .fillMaxHeight()
-                                .weight(0.8f),
+                            .padding(4.dp)
+                            .fillMaxHeight()
+                            .weight(0.8f),
                             verticalArrangement = Arrangement.Center
                         ) {
                             Text(text = item.title)
