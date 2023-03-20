@@ -25,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import coil.compose.base.R
 import coil.compose.rememberImagePainter
 import coil.size.Scale
@@ -33,6 +34,7 @@ import edu.uksw.fti.pam.pamactivityintent.models.AnimeModel
 import edu.uksw.fti.pam.pamactivityintent.models.AnimeViewModel
 import edu.uksw.fti.pam.pamactivityintent.models.TodosViewModel
 import edu.uksw.fti.pam.pamactivityintent.ui.theme.PAMActivityIntentTheme
+import kotlin.math.log
 
 
 @Composable
@@ -40,18 +42,20 @@ fun HomeScreen(name: String) {
     Text(text = "Hello $name!")
 }
 
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    val avm = AnimeViewModel()
-    PAMActivityIntentTheme {
-        MainScreenView(avm)
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun DefaultPreview() {
+//    val avm = AnimeViewModel()
+//    val navController =
+//    PAMActivityIntentTheme {
+//        MainScreenView(avm)
+//    }
+//}
 
 @Composable
 fun MainScreenView(
-    avm: AnimeViewModel
+    avm: AnimeViewModel,
+    navController: NavController
 ) {
     LaunchedEffect(
         Unit,
@@ -60,14 +64,40 @@ fun MainScreenView(
         }
     )
     Column {
+
+
+
         when {
             avm.errorMessage.isEmpty() -> {
-                AvmList(avl = avm.animeList) {animeId ->
+                AvmList(avl = avm.animeList) {animeId,animeTitle,animeImgUrl, animeGenre, animeDeskripsi ->
                     Log.d("ClickItem", "this is anime id: $animeId")
+                    navController.navigate("Detail?id=$animeId?title=$animeTitle?imgUrl=$animeImgUrl?genre=$animeGenre?Deskripsi=$animeDeskripsi")
                 }
+
+//                val random = (0..avm.animeList.size).random()
+                Log.d("hero-item", "${avm.animeList.size}")
+
+
+
             }
             else -> Log.e("AVM", "Something happened")
         }
+
+
+        when {
+
+            avm.animeList.size>0 -> {
+                val random = (0..avm.animeList.size).random()
+                AvmHero(avm.animeList[random]) {id, name ->
+                    Log.d("ClickItem", "this is anime id: $id")
+                    navController.navigate("Detail?id=$id?name=$name")
+                }
+                Log.d("hero-item", "${avm.animeList[random]}")
+            }
+
+        }
+
+
         if (avm.errorMessage.isEmpty()) {
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(120.dp)
@@ -152,8 +182,67 @@ fun MainScreenView(
     }
 }
 
+
 @Composable
-fun AvmList(avl: List<AnimeModel>, itemClick: (index: Int)-> Unit) {
+fun AvmHero(anime: AnimeModel, itemClick: (index: Int, title: String)-> Unit){
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp)
+            .clickable { itemClick(anime.id, anime.title) }
+    ){
+        Row(modifier = Modifier
+            .fillMaxWidth()
+            .padding(5.dp)
+        ) {
+            Image(
+                painter = rememberImagePainter(
+                    data = anime.imgUrl,
+                    builder = {
+                        scale(Scale.FILL)
+                        placeholder(R.drawable.notification_action_background)
+                        transformations(CircleCropTransformation())
+                    }
+                ),
+                contentDescription = anime.Deskripsi,
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .weight(0.2f)
+            )
+            Column(modifier = Modifier
+                .padding(4.dp)
+                .fillMaxHeight()
+                .weight(0.8f),
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(text = anime.title)
+                Text(
+                    text = anime.title,
+                    style = MaterialTheme.typography.subtitle1,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = anime.genre,
+                    style = MaterialTheme.typography.caption,
+                    modifier = Modifier
+                        .background(
+                            Color.LightGray
+                        )
+                        .padding(4.dp)
+                )
+                Text(
+                    text = anime.Deskripsi,
+                    style = MaterialTheme.typography.body1,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun AvmList(avl: List<AnimeModel>, itemClick: (index: Int, title: String, imgUrl: String, genre: String, Deskripsi:String)-> Unit) {
     Box(modifier = Modifier
         .fillMaxWidth()
         .padding(10.dp)
@@ -168,7 +257,7 @@ fun AvmList(avl: List<AnimeModel>, itemClick: (index: Int)-> Unit) {
                     .height(150.dp)
                     .padding(5.dp)
                     .clickable {
-                        itemClick(item.id)
+                        itemClick(item.id, item.title, item.imgUrl, item.genre, item.Deskripsi)
                     },
                 ) {
                     Row(modifier = Modifier

@@ -7,11 +7,11 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.graphics.BlendMode.Companion.Screen
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import androidx.navigation.NavHostController
+import androidx.navigation.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -33,13 +33,52 @@ fun NavigationGraph(
     ) {
         composable(BottomNavItems.Home.screen_route) {
 //            HomeScreen(name = "Android")
-            MainScreenView(avm = vm1)
+            MainScreenView(avm = vm1, navController = navController)
         }
         composable(BottomNavItems.Article.screen_route) {
             ArticleScreen()
         }
         composable(BottomNavItems.Profile.screen_route) {
             ProfileScreen()
+        }
+        composable(
+            route = "Detail" + "?id={id}?title={title}?imgUrl={imgUrl}?genre={genre}?Deskripsi={Deskripsi}",
+            arguments = listOf(
+                navArgument("id"){
+                    type = NavType.StringType
+                    defaultValue = "Anime"
+                    nullable = true
+                },
+                navArgument("name") {
+                    type = NavType.StringType
+                    defaultValue = "Anime"
+                    nullable = true
+                }
+                ,
+                navArgument("imgUrl") {
+                    type = NavType.StringType
+                    defaultValue = "Anime"
+                    nullable = true
+                },
+                navArgument("genre") {
+                    type = NavType.StringType
+                    defaultValue = "Anime"
+                    nullable = true
+                },
+                navArgument("Deskripsi") {
+                    type = NavType.StringType
+                    defaultValue = "Anime"
+                    nullable = true
+                }
+            )
+        ) { navBackStackEntry: NavBackStackEntry ->
+            DetailScreen(
+                id=navBackStackEntry.arguments?.getString("id") ,
+                title = navBackStackEntry.arguments?.getString("title") ,
+                imgUrl = navBackStackEntry.arguments?.getString("imgUrl") ,
+                genre = navBackStackEntry.arguments?.getString("genre") ,
+                Deskripsi = navBackStackEntry.arguments?.getString("Deskripsi")
+                )
         }
     }
 }

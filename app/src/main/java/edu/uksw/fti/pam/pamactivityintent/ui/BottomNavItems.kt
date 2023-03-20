@@ -13,4 +13,6 @@ sealed class BottomNavItems(
     object Home: BottomNavItems("Home", Icons.Default.Home, "home")
     object Article: BottomNavItems("Article", Icons.Default.Search, "articlee")
     object Profile: BottomNavItems("Profile", Icons.Default.Person, "profile")
+//    object Details: BottomNavItems("Details", Icons.Default.Person, "profile")
+
 }
